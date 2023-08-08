@@ -109,4 +109,5 @@ jobs:
             --platform managed \
             --region ${{ env.REGION }} \
             --project ${{ env.PROJECT_ID }} \
+            --cors-allowed-origins * \
             --format json
