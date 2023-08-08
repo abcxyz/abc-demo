@@ -109,5 +109,5 @@ jobs:
             --platform managed \
             --region ${{ env.REGION }} \
             --project ${{ env.PROJECT_ID }} \
-            --cors-allowed-origins * \
+            --set-env-vars=ESPv2_ARGS=--cors_preset=basic \
             --format json
