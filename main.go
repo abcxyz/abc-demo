@@ -37,9 +37,8 @@ var port = flag.String("port", defaultPort, "Specifies server port to listen on.
 
 func handleHello(h *renderer.Renderer) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		logger := logging.FromContext(ctx)
-		logger.InfoContext(ctx, "handling request")
+		logger := logging.FromContext(r.Context())
+		logger.InfoContext(r.Context(), "handling request")
 		h.RenderJSON(w, http.StatusOK, map[string]string{"message": "hello world"})
 	})
 }
@@ -61,7 +60,7 @@ func realMain(ctx context.Context) error {
 	r := chi.NewRouter()
 	r.Mount("/", handleHello(h))
 	walkFunc := func(method, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
-		logger.DebugContext(ctx, "route registered", "http_method", method, "route", route)
+		logger.DebugContext(ctx, "Route registered", "http_method", method, "route", route)
 		return nil
 	}
 
@@ -90,17 +89,15 @@ func realMain(ctx context.Context) error {
 
 func main() {
 	// creates a context that exits on interrupt signal.
-	ctx, done := signal.NotifyContext(context.Background(),
-		syscall.SIGINT, syscall.SIGTERM)
+	ctx, done := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer done()
-
-	logger := logging.NewFromEnv("")
+	logger := logging.FromContext(ctx)
 
 	flag.Parse()
 	if err := realMain(logging.WithLogger(ctx, logger)); err != nil {
-		done() // deferred function calls won't execute due to logger.Fatal() never returning
-		logger.ErrorContext(ctx, err.Error(), "error", err)
+		done()
+		logger.ErrorContext(ctx, err.Error())
 		os.Exit(1)
 	}
-	logger.InfoContext(ctx, "done")
+	logger.InfoContext(ctx, "completed")
 }
