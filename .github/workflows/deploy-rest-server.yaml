@@ -19,15 +19,16 @@ on:
       deployment_environment:
         type: 'choice'
         description: 'Environment to deploy image to.'
-        default: 'autopush'
+        default: 'integration'
         options:
-          - 'autopush'
+          - 'integration'
+          - 'production'
   workflow_call:
     inputs:
       deployment_environment:
         type: 'string'
         description: 'Environment to deploy image to.'
-        default: 'autopush'
+        default: 'integration'
 concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}'
   cancel-in-progress: true
