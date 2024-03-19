@@ -61,7 +61,13 @@ func realMain(ctx context.Context) error {
 	r := chi.NewRouter()
 	r.Mount("/", handleHello(h))
 	walkFunc := func(method, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
-		logger.DebugContext(ctx, "Route registered", "http_method", method, "route", route)
+		logger.DebugContext(ctx,
+			"Route registered",
+			"http_method",
+			method,
+			"route",
+			route,
+		)
 		return nil
 	}
 
